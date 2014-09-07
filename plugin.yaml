@@ -115,8 +115,8 @@ types:
             - nova_config: {}
         interfaces:
             cloudify.interfaces.lifecycle:
-                - create: openstack_nova_net_plugin.floatingip.create
-                - delete: openstack_nova_net_plugin.floatingip.delete
+                - create: nova_net_plugin.floatingip.create
+                - delete: nova_net_plugin.floatingip.delete
 
     cloudify.openstack.nova_net.security_group:
         derived_from: cloudify.types.base
