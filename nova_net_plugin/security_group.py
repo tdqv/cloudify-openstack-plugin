@@ -106,6 +106,7 @@ def _sg_rules_are_equal(r1, r2):
 def dummy(ctx, **kwargs):
     return
 
+
 @operation
 @with_nova_client
 def create(ctx, nova_client, **kwargs):
@@ -115,7 +116,6 @@ def create(ctx, nova_client, **kwargs):
         rules.N.remote_group_node -> rules.N.remote_group_id
         (Node name in YAML)
     """
-
 
     security_group = {
         # default security group description is an empty string
@@ -138,8 +138,9 @@ def create(ctx, nova_client, **kwargs):
     rules_to_apply = ctx.properties['rules']
     egress_rules_to_apply = _egress_rules(rules_to_apply)
     if len(egress_rules_to_apply) > 0:
-        raise NonRecoverableError("egress rules, required for security group {0}"
-                                  ", are not supported in nova-net".format(security_group['name']))
+        raise NonRecoverableError("egress rules, required for security group "
+                                  "{0}, are not supported in "
+                                  "nova-net".format(security_group['name']))
 
     #   body = {"security_group_rule": {
     #    "ip_protocol": ip_protocol,
@@ -176,13 +177,16 @@ def create(ctx, nova_client, **kwargs):
             del sgr['remote_ip_prefix']
 
         if ('remote_group_name' in sgr) and sgr['remote_group_name']:
-            target_secgroup = _find_existing_sg(ctx, nova_client, sgr['remote_group_name'] )
+            target_secgroup = _find_existing_sg(
+                ctx, nova_client, sgr['remote_group_name'])
             if target_secgroup:
                 sgr['group_id'] = target_secgroup.id
             else:
                 raise NonRecoverableError('Could not find security group {0}, '
-                                          'required by rule in security group {1}'.format(
-                    sgr['remote_group_name'],security_group['name']))
+                                          'required by rule in security group '
+                                          '{1}'.format(
+                                              sgr['remote_group_name'],
+                                              security_group['name']))
 
             del sgr['remote_group_name']
             del sgr['remote_ip_prefix']
@@ -215,7 +219,8 @@ def create(ctx, nova_client, **kwargs):
                                          r1,
                                          r2))
 
-    sg = nova_client.security_groups.create(security_group['name'], security_group['description'])
+    sg = nova_client.security_groups.create(
+        security_group['name'], security_group['description'])
 
     for sgr in security_group_rules:
         sgr['parent_group_id'] = sg.id
@@ -242,6 +247,6 @@ def delete(ctx, nova_client, **kwargs):
         # * We deleted the server
         # * Other deployment deleted the security group
         # * We are trying to delete the security group
-        # TODO - this is ugly
-        ctx.logger.warn("Security group with id '{0}' was not deleted. Error was: ".format(sg_id, e.message))
-        return
+        ctx.logger.warn("Security group with id '{0}' was not deleted. "
+                        "Error was: {1}".format(sg_id, e.message))
+        raise NonRecoverableError("Failed to delete security group: " + str(e))

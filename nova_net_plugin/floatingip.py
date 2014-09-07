@@ -16,7 +16,7 @@
 from cloudify.decorators import operation
 from cloudify.exceptions import NonRecoverableError, RecoverableError
 
-from openstack_plugin_common import with_nova_client, provider
+from openstack_plugin_common import with_nova_client
 
 
 @operation
@@ -30,7 +30,7 @@ def create(ctx, nova_client, **kwargs):
         return
 
     floatingip = {
-        'pool':None
+        'pool': None
     }
 
     if 'floatingip' in ctx.properties:
@@ -42,7 +42,8 @@ def create(ctx, nova_client, **kwargs):
         del floatingip['ip']
 
     if 'floating_ip_address' in floatingip:
-        fip = _find_existing_floating_ip(nova_client, floatingip['floating_ip_address'])
+        fip = _find_existing_floating_ip(
+            nova_client, floatingip['floating_ip_address'])
 
         ctx.runtime_properties['external_id'] = fip.id
         ctx.runtime_properties['floating_ip_address'] = fip.ip
@@ -51,7 +52,6 @@ def create(ctx, nova_client, **kwargs):
 
     fip = nova_client.floating_ips.create(floatingip['pool'])
 
-
     ctx.runtime_properties['external_id'] = fip.id
     ctx.runtime_properties['floating_ip_address'] = fip.ip
     # Acquired here -> OK to delete
@@ -59,17 +59,21 @@ def create(ctx, nova_client, **kwargs):
     ctx.logger.info(
         "Allocated floating IP {0}".format(fip.ip))
 
+
 def _find_existing_floating_ip(nova_client, address):
     fips = nova_client.floating_ips.list()
     filtered = [fip for fip in fips if fip.ip == address]
     if len(filtered) == 0:
-        raise RecoverableError('Did not find an allocated floating IP with address {0}'.format(address))
+        raise RecoverableError('Did not find an allocated floating IP '
+                               'with address {0}'.format(address))
 
     if len(filtered) > 1:
-        raise NonRecoverableError('Found multiple floating IPs with address {0}. '
-                                  'This should not be possible'.format(address))
+        raise NonRecoverableError('Found multiple floating IPs with '
+                                  'address {0}. This should not be '
+                                  'possible'.format(address))
 
     return fip
+
 
 @operation
 @with_nova_client
