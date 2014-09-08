@@ -14,10 +14,6 @@ plugins:
         derived_from: cloudify.plugins.manager_plugin
         properties:
             url: https://github.com/cloudify-cosmo/cloudify-openstack-plugin/archive/CFY-999-nova-net.zip
-    nova_net_plugin:
-        derived_from: cloudify.plugins.manager_plugin
-        properties:
-            url: https://github.com/cloudify-cosmo/cloudify-openstack-plugin/archive/CFY-999-nova-net.zip
 
 types:
     cloudify.openstack.server:
@@ -115,8 +111,8 @@ types:
             - nova_config: {}
         interfaces:
             cloudify.interfaces.lifecycle:
-                - create: nova_net_plugin.floatingip.create
-                - delete: nova_net_plugin.floatingip.delete
+                - create: nova_plugin.floatingip.create
+                - delete: nova_plugin.floatingip.delete
 
     cloudify.openstack.nova_net.security_group:
         derived_from: cloudify.types.base
@@ -126,8 +122,8 @@ types:
             - rules: []
         interfaces:
             cloudify.interfaces.lifecycle:
-                - create: nova_net_plugin.security_group.create
-                - delete: nova_net_plugin.security_group.delete
+                - create: nova_plugin.security_group.create
+                - delete: nova_plugin.security_group.delete
 
 
 relationships:

@@ -29,8 +29,7 @@ setup(
     packages=[
         'openstack_plugin_common',
         'nova_plugin',
-        'neutron_plugin',
-        'nova_net_plugin'
+        'neutron_plugin'
     ],
     package_data={'nova_plugin': ['VERSION']},
     license='LICENSE',
