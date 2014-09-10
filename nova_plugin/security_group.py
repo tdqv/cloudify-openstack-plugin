@@ -27,21 +27,6 @@ from openstack_plugin_common import (
 
 NODE_NAME_RE = re.compile('^(.*)_.*$')  # Anything before last underscore
 
-# DEFAULT_EGRESS_RULES are based on
-# https://github.com/openstack/neutron/blob/5385d06f86a1309176b5f688071e6ea55d91e8e5/neutron/db/securitygroups_db.py#L132-L136  # noqa
-SUPPORTED_ETHER_TYPES = ('IPv4', 'IPv6')
-DEFAULT_EGRESS_RULES = []
-for ethertype in SUPPORTED_ETHER_TYPES:
-    DEFAULT_EGRESS_RULES.append({
-        'direction': 'egress',
-        'ethertype': ethertype,
-        'port_range_max': None,
-        'port_range_min': None,
-        'protocol': None,
-        'remote_group_id': None,
-        'remote_ip_prefix': None,
-    })
-
 
 class RulesMismatchError(NonRecoverableError):
     pass

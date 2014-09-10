@@ -14,7 +14,7 @@
 #  * limitations under the License.
 
 from cloudify.decorators import operation
-from cloudify.exceptions import NonRecoverableError, RecoverableError
+from cloudify.exceptions import NonRecoverableError
 
 from openstack_plugin_common import with_nova_client
 
@@ -64,8 +64,8 @@ def _find_existing_floating_ip(nova_client, address):
     fips = nova_client.floating_ips.list()
     filtered = [fip for fip in fips if fip.ip == address]
     if len(filtered) == 0:
-        raise RecoverableError('Did not find an allocated floating IP '
-                               'with address {0}'.format(address))
+        raise NonRecoverableError('Did not find an allocated floating IP '
+                                  'with address {0}'.format(address))
 
     if len(filtered) > 1:
         raise NonRecoverableError('Found multiple floating IPs with '

@@ -74,6 +74,10 @@ class ProviderContext(object):
     def subnet(self):
         return self._resources.get('subnet')
 
+    @property
+    def is_neutron_supported_region(self):
+        return self._resources.get('is_neutron_supported_region')
+
     def __repr__(self):
         info = json.dumps(self._provider_context)
         return '<' + self.__class__.__name__ + ' ' + info + '>'

@@ -128,16 +128,10 @@ def start_new_server(ctx, nova_client):
         'server')
 
     # Network configuration only relevant for neutron, ignore for nova-net
-    if nc:
+    if provider_context.is_neutron_supported_region:
         # Multi-NIC by networks - start
         network_nodes_runtime_properties = ctx.capabilities.get_all().values()
-        if network_nodes_runtime_properties and \
-                management_network_id is None:
-            # Known limitation
-            raise NonRecoverableError(
-                "Nova server with multi-NIC requires "
-                "'management_network_name' in properties  or id "
-                "from provider context, which was not supplied")
+
         nics = [
             {'net-id': n['external_id']}
             for n in network_nodes_runtime_properties
@@ -149,13 +143,6 @@ def start_new_server(ctx, nova_client):
 
         # Multi-NIC by ports - start
         port_nodes_runtime_properties = ctx.capabilities.get_all().values()
-        if port_nodes_runtime_properties and \
-                management_network_id is None:
-            # Known limitation
-            raise NonRecoverableError(
-                "Nova server with multi-NIC requires "
-                "'management_network_name' in properties  or id "
-                "from provider context, which was not supplied")
         nics = [
             {'port-id': n['external_id']}
             for n in port_nodes_runtime_properties
