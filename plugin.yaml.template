@@ -104,6 +104,27 @@ types:
                   - create: neutron_plugin.floatingip.create
                   - delete: neutron_plugin.floatingip.delete
 
+    cloudify.openstack.nova_net.floating_ip:
+        derived_from: cloudify.types.base
+        properties:
+            - floatingip: {}
+            - nova_config: {}
+        interfaces:
+            cloudify.interfaces.lifecycle:
+                - create: nova_plugin.floatingip.create
+                - delete: nova_plugin.floatingip.delete
+
+    cloudify.openstack.nova_net.security_group:
+        derived_from: cloudify.types.base
+        properties:
+            - security_group
+            - nova_config: {}
+            - rules: []
+        interfaces:
+            cloudify.interfaces.lifecycle:
+                - create: nova_plugin.security_group.create
+                - delete: nova_plugin.security_group.delete
+
 relationships:
     cloudify.openstack.port_connected_to_security_group:
         derived_from: cloudify.relationships.connected_to
