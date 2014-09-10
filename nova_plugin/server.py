@@ -95,11 +95,15 @@ def start_new_server(ctx, nova_client):
             management_network_id = int_network['id']
             management_network_name = int_network['name']  # Already transform.
 
-    if management_network_id is None and provider_context.is_neutron_supported_region:
-        raise NonRecoverableError("Neutron support is enabled but Management network ID is missing")
+    if management_network_id is None \
+            and provider_context.is_neutron_supported_region:
+        raise NonRecoverableError("Neutron support is enabled "
+                                  "but Management network ID is missing")
 
-    if management_network_id is not None and not provider_context.is_neutron_supported_region:
-        raise NonRecoverableError("Neutron support is disabled but Management network ID has been set")
+    if management_network_id is not None \
+            and not provider_context.is_neutron_supported_region:
+        raise NonRecoverableError("Neutron support is disabled "
+                                  "but Management network ID has been set")
 
     if management_network_id is not None:
         nc = _neutron_client(ctx)
@@ -312,7 +316,8 @@ def get_state(ctx, nova_client, **kwargs):
             'cloudify_management_network_name')
         for network, network_ips in server.networks.items():
             if provider_context.is_neutron_supported_region:
-                if management_network_name and network == management_network_name:
+                if management_network_name \
+                        and network == management_network_name:
                     manager_network_ip = network_ips[0]
             ips[network] = network_ips
 
